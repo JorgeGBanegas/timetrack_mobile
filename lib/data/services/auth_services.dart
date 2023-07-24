@@ -118,6 +118,7 @@ class AuthService {
       );
 
       if(response.statusCode == 200){
+        safePrint('Sesión cerrada');
         await deleteData();
       }else{
         throw Exception('Error al cerrar sesión');

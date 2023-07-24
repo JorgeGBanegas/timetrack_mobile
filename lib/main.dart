@@ -1,59 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:time_track/styles/colors.dart';
+import 'package:time_track/styles/colors/colors.dart';
+import 'package:time_track/ui/pages/login_page/change_password.dart';
+import 'package:time_track/ui/pages/login_page/login_page.dart';
 
+import 'package:time_track/ui/pages/splash/splash_page.dart';
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
+    
     return MaterialApp(
       title: 'TimeTrack',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: MyColors.themePrimaryColor,
+        fontFamily: 'JetBrainsMono',
       ),
-      home: const MyHomePage(title: 'TimeTrack'),
+      home: const SplashPage(),
+      routes: {
+        LoginPage.routeName: (context) => const LoginPage(),
+        ChangePasswordPage.routeName: (context) => const ChangePasswordPage(),
+        SplashPage.routeName: (context) => const SplashPage(),
+      }
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            // cargar imagen svg
-            SvgPicture.asset(
-              'assets/logo.svg',
-              width: 200,
-              height: 200,
-              semanticsLabel: 'Logo',
-            ),
-            const Text(
-              'Bienvendio a TimeTrack',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// The rest of your code and classes...

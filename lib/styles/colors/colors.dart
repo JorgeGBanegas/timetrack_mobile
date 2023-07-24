@@ -23,4 +23,8 @@ class MyColors {
   static const Color secondary = Color(0xFF1FC493);
   static const Color background = Color(0xFF040404);
   
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color black = Color(0xFF000000);
+  static const Color red = Color(0xFFF52D56);
+  static const Color orange = Color(0xFFF5A52D);
 }

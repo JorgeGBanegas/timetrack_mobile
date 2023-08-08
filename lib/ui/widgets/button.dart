@@ -21,20 +21,21 @@ class MyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-            padding: EdgeInsets.all(padding),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              onPressed: onPressed,
-              child: Text(
-                text,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: textColor,
-                ),
-              ),
-            ),
-          );
+      padding: EdgeInsets.all(padding),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          minimumSize: const Size(double.infinity, 50),
+        ),
+        onPressed: onPressed,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 16,
+            color: textColor,
+          ),
+        ),
+      ),
+    );
   }
 }

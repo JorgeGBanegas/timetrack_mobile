@@ -1,6 +1,7 @@
 import 'package:face_camera/face_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:time_track/styles/colors/colors.dart';
+import 'package:time_track/ui/pages/history/history_page.dart';
 import 'package:time_track/ui/pages/home_page/widgets/camera.dart';
 import 'package:time_track/ui/pages/login_page/change_password.dart';
 import 'package:time_track/ui/pages/login_page/login_page.dart';
@@ -42,6 +43,7 @@ class _MyAppState extends State<MyApp> {
           ChangePasswordPage.routeName: (context) => const ChangePasswordPage(),
           SplashPage.routeName: (context) => const SplashPage(),
           MyCamera.routeName: (context) => const MyCamera(),
+          HistoryPage.routeName: (context) => const HistoryPage(),
         });
   }
 }

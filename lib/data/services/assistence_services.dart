@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:time_track/data/services/auth_services.dart';
 import 'package:time_track/api.dart';
 import 'package:http/http.dart' as http;
+import 'package:time_track/data/models/record.dart';
 
 class AsistenceServices {
   Future<Map<String, dynamic>> registerAssistance(
@@ -20,8 +20,6 @@ class AsistenceServices {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
       };
-      safePrint(
-          "🚀 ~ file: assistence_services.dart:26 ~ AsistenceServices ~ infoUser['email']: ${infoUser['email']}");
 
       Map<String, dynamic> req = {
         "employeeEmail": infoUser['email'],
@@ -30,7 +28,6 @@ class AsistenceServices {
         "recordType": typeRecord, // "IN" or "OUT
         "location": [lat, lng],
       };
-      safePrint(req);
 
       final response = await http.post(
         Uri.parse('${Api.ulrAssistence}/attendance-record/'),
@@ -38,10 +35,48 @@ class AsistenceServices {
         body: jsonEncode(req),
       );
       dynamic body = jsonDecode(response.body);
-      safePrint(
-          "🚀 ~ file: assistence_services.dart:39 ~ AsistenceServices ~ body: $body");
+
       if (response.statusCode == 201) {
         return body;
+      } else {
+        throw Exception(body['message']);
+      }
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<List<Record>> getAttendanceHistory(
+      {required int year, required int month}) async {
+    try {
+      final infoUser = await AuthService().getUserInfo();
+      final email = infoUser['email'];
+      final token = await AuthService().getToken();
+
+      Map<String, String> header = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+
+      final response = await http.get(
+        Uri.parse(
+            '${Api.ulrAssistence}/attendance-record/history?email=$email&year=$year&month=$month'),
+        headers: header,
+      );
+
+      dynamic body = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        List<Record> records = [];
+        for (final item in body) {
+          final date = DateTime.parse(item['date']).toIso8601String();
+          final checkIn = item['checkIn']['check'];
+          final checkOut =
+              item['checkOut'] == null ? ' - ' : item['checkOut']['check'];
+          records.add(Record.fromJson(
+              {'date': date, 'checkIn': checkIn, 'checkOut': checkOut}));
+        }
+
+        return records;
       } else {
         throw Exception(body['message']);
       }

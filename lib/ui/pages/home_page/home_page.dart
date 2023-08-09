@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:time_track/data/services/auth_services.dart';
 import 'package:time_track/data/services/location_services.dart';
 import 'package:time_track/styles/colors/colors.dart';
+import 'package:time_track/ui/pages/history/history_page.dart';
 import 'package:time_track/ui/pages/home_page/widgets/info_panel.dart';
 import 'package:time_track/ui/pages/home_page/widgets/map_container.dart';
 import 'package:time_track/ui/widgets/app_bar.dart';
@@ -21,43 +23,89 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MyAppBar(title: 'TimeTrack'),
-      body: Center(
-        child: FutureBuilder<Map<String, dynamic>>(
-          future: initialize(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Column(
-                children: [
-                  Expanded(
-                    flex: 6,
-                    child: MapContainer(
-                      zoneCoordinates: snapshot.data!['zoneCoordinates'],
+        appBar: const MyAppBar(title: 'TimeTrack'),
+        body: Center(
+          child: FutureBuilder<Map<String, dynamic>>(
+            future: initialize(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Column(
+                  children: [
+                    Expanded(
+                      flex: 6,
+                      child: MapContainer(
+                        zoneCoordinates: snapshot.data!['zoneCoordinates'],
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: InfoPanel(
-                      title: snapshot.data!['location'],
-                      nameSchedule: snapshot.data!['scheduleAndAssistence']
-                          ['nameSchedule'],
-                      schedule: snapshot.data!['scheduleAndAssistence']
-                          ['schedule'],
-                      lastRecord: snapshot.data!['scheduleAndAssistence']
-                          ['lastRecord'],
+                    Expanded(
+                      flex: 4,
+                      child: InfoPanel(
+                        title: snapshot.data!['location'],
+                        nameSchedule: snapshot.data!['scheduleAndAssistence']
+                            ['nameSchedule'],
+                        schedule: snapshot.data!['scheduleAndAssistence']
+                            ['schedule'],
+                        lastRecord: snapshot.data!['scheduleAndAssistence']
+                            ['lastRecord'],
+                      ),
                     ),
-                  ),
-                ],
-              );
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return const MyProgressBar(color: MyColors.primary, size: 40);
-            }
-          },
+                  ],
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return const MyProgressBar(color: MyColors.primary, size: 40);
+              }
+            },
+          ),
         ),
-      ),
-    );
+        drawer: Drawer(
+          child: ListView(
+            children: [
+              DrawerHeader(
+                decoration: const BoxDecoration(
+                  color: MyColors.primary,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'TimeTrack',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    FutureBuilder<Map<String, String>>(
+                      future: getInfoUser(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          final userName = snapshot.data!['userName'];
+                          final photoUrl = snapshot.data!['photo'];
+                          return avatarWidget(userName!, photoUrl!);
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          return const MyProgressBar(
+                              color: Colors.white, size: 20);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.history),
+                title: const Text('Historial'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, HistoryPage.routeName);
+                },
+              ),
+            ],
+          ),
+        ));
   }
 
   Future<Map<String, dynamic>> initialize() async {
@@ -120,9 +168,33 @@ class _MyHomePageState extends State<MyHomePage> {
         'lastRecord': lastRecord,
       };
     } catch (e) {
-      print(e);
       throw Exception(
           'Error al obtener el horario y asistencia, intente de nuevo, o contacte al administrador');
     }
+  }
+
+  Future<Map<String, String>> getInfoUser() async {
+    try {
+      final user = await AuthService().getUserInfo();
+      return {
+        'userName': user['first_name'] + ' ' + user['last_name'],
+        'photo': user['image'],
+      };
+    } catch (e) {
+      throw Exception('Error al obtener la informacion del usuario');
+    }
+  }
+
+  Widget avatarWidget(String userName, String photoUrl) {
+    return Row(
+      children: [
+        CircleAvatar(
+          radius: 30,
+          backgroundImage: NetworkImage(photoUrl),
+        ),
+        const SizedBox(width: 10),
+        Text(userName, style: const TextStyle(color: Colors.white)),
+      ],
+    );
   }
 }

@@ -116,7 +116,12 @@ class _MyHomePageState extends State<MyHomePage> {
           await placemarkFromCoordinates(position.latitude, position.longitude);
       final locality = placemarks.first.locality;
       final street = placemarks.first.street;
-      final zoneCoordinates = await getAssignZone();
+      List<List<double>>? zoneCoordinates = await getAssignZone();
+
+      zoneCoordinates ??= [
+        [position.latitude, position.longitude],
+        [position.latitude, position.longitude]
+      ];
       final scheduleAndAssistence = await getScheduleAndAssistence();
       return {
         'location': '$locality, $street',
@@ -130,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<List<List<double>>> getAssignZone() async {
+  Future<List<List<double>>?> getAssignZone() async {
     try {
       final coordinates = await LocationServices().getAssignZone();
       return coordinates;
@@ -143,9 +148,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<Map<String, String>> getScheduleAndAssistence() async {
     try {
       final schedule = await LocationServices().getScheduleAndAssistence();
-      final nameSchedule = schedule.nameSchedule;
+      final nameSchedule =
+          schedule!.currenteSchedule == null ? 'Libre' : schedule.nameSchedule;
+      final cuurrentSechedule = schedule.currenteSchedule;
       final timeSchedule =
-          "${schedule.currenteSchedule.startHour.substring(0, schedule.currenteSchedule.startHour.length - 3)} - ${schedule.currenteSchedule.endHour.substring(0, schedule.currenteSchedule.endHour.length - 3)}";
+          "${cuurrentSechedule == null ? '' : cuurrentSechedule.startHour.substring(0, cuurrentSechedule.startHour.length - 3)} - ${cuurrentSechedule == null ? '' : cuurrentSechedule.endHour.substring(0, cuurrentSechedule.endHour.length - 3)}";
+
       final lastAssistence = schedule.lastRecord;
       String lastRecord = '';
       if (lastAssistence == null) {

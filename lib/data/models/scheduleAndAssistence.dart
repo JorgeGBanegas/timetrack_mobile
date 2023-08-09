@@ -4,7 +4,7 @@ import 'package:time_track/data/models/employeeSchedule.dart';
 
 class ScheduleAndAssistence {
   final String nameSchedule;
-  final EmployeeSchedule currenteSchedule;
+  final EmployeeSchedule? currenteSchedule;
   EmployeeRecord? lastRecord;
 
   ScheduleAndAssistence({
@@ -16,7 +16,9 @@ class ScheduleAndAssistence {
   factory ScheduleAndAssistence.fromJson(Map<String, dynamic> json) {
     return ScheduleAndAssistence(
       nameSchedule: json['nameSchedule'],
-      currenteSchedule: EmployeeSchedule.fromJson(json['currentSchedule']),
+      currenteSchedule: json['currentSchedule'] == null
+          ? null
+          : EmployeeSchedule.fromJson(json['currentSchedule']),
       lastRecord: json['lastRecord'] == null
           ? null
           : EmployeeRecord.fromJson(json['lastRecord']),

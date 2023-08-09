@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:time_track/data/models/scheduleAndAssistence.dart';
 import 'package:time_track/data/services/auth_services.dart';
@@ -22,7 +21,7 @@ class LocationServices {
     return await Geolocator.getCurrentPosition();
   }
 
-  Future<List<List<double>>> getAssignZone() async {
+  Future<List<List<double>>?> getAssignZone() async {
     try {
       Map<String, String> tokenData = await AuthService().getToken();
       final infoUser = await AuthService().getUserInfo();
@@ -38,6 +37,7 @@ class LocationServices {
         Uri.parse('${Api.urlGeofencing}/assigned-zones/employee/$email'),
         headers: header,
       );
+      if (response.body.isEmpty) return null;
       final body = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
@@ -59,11 +59,10 @@ class LocationServices {
       coordinate.add(element[1]);
       coordinatesList.add(coordinate);
     }
-    safePrint('sadasjdaskjdkasjdkasj: ${coordinatesList.toString()}');
     return coordinatesList;
   }
 
-  Future<ScheduleAndAssistence> getScheduleAndAssistence() async {
+  Future<ScheduleAndAssistence?> getScheduleAndAssistence() async {
     try {
       Map<String, String> tokenData = await AuthService().getToken();
       final infoUser = await AuthService().getUserInfo();
@@ -80,6 +79,7 @@ class LocationServices {
         headers: header,
       );
       final body = jsonDecode(response.body);
+      if (body.length == 0) return null;
       if (response.statusCode == 200) {
         final obj = ScheduleAndAssistence.fromJson(body);
         return obj;

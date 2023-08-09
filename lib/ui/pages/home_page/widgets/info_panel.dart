@@ -2,7 +2,6 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:time_track/data/models/scheduleAndAssistence.dart';
 import 'package:time_track/data/services/location_services.dart';
 import 'package:time_track/styles/colors/colors.dart';
 import 'package:time_track/ui/pages/home_page/widgets/camera.dart';

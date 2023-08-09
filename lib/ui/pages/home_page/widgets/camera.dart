@@ -6,7 +6,6 @@ import 'package:face_camera/face_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:time_track/data/services/assistence_services.dart';
-import 'package:time_track/data/services/auth_services.dart';
 import 'package:time_track/data/services/location_services.dart';
 import 'package:time_track/styles/colors/colors.dart';
 import 'package:time_track/ui/widgets/app_bar.dart';
@@ -67,7 +66,6 @@ class _MyCameraState extends State<MyCamera> {
                           text: 'Enviar',
                           color: MyColors.primary,
                           onPressed: () {
-                            print('Enviar');
                             register(_capturedImage, typeRecord);
                           },
                           textColor: MyColors.white,
@@ -145,7 +143,7 @@ class _MyCameraState extends State<MyCamera> {
       double latitude = position.latitude;
       double longitude = position.longitude;
 
-      final res = await AsistenceServices().registerAssistance(
+      await AsistenceServices().registerAssistance(
           base64Image: base64Image,
           lat: latitude,
           lng: longitude,

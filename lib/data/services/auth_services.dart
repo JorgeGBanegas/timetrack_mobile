@@ -55,7 +55,13 @@ class AuthService {
       );
 
       final jsonResult = jsonDecode(response.body);
-
+      print(
+          "🚀 ~ file: auth_services.dart:58 ~ AuthService ~ jsonResult: ${jsonResult['user']}");
+      final role = jsonResult['user']['role'];
+      if (role != 'Empleado') {
+        throw Exception(
+            'No tienes permisos para acceder a esta aplicación, solo permitido a los empleados');
+      }
       if (response.statusCode == 200) {
         if (jsonResult.containsKey('access_token')) {
           final token = jsonResult['access_token'];
